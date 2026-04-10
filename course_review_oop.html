@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقرير مراجعة الدورة — OOP</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #F8F7F4;
+    --surface: #FFFFFF;
+    --surface-alt: #F1EFE8;
+    --border: rgba(0,0,0,0.1);
+    --border-md: rgba(0,0,0,0.18);
+    --text-primary: #1A1A18;
+    --text-secondary: #5F5E5A;
+    --text-muted: #888780;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --green-dot: #639922;
+    --red-bg: #FCEBEB;
+    --red-text: #A32D2D;
+    --red-dot: #E24B4A;
+    --blue-bg: #E6F1FB;
+    --blue-text: #185FA5;
+    --amber-bg: #FAEEDA;
+    --amber-text: #854F0B;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .header h1 span {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 18px;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Summary */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 30px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .stat-ok .stat-num { color: var(--green-text); }
+  .stat-issue .stat-num { color: var(--red-text); }
+  .stat-note .stat-num { color: var(--blue-text); }
+
+  /* Section */
+  .section-block { margin-bottom: 2rem; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Lesson Row */
+  .lesson-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .lesson-row:hover { border-color: var(--border-md); }
+
+  .lesson-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-ok { background: var(--green-dot); }
+  .dot-issue { background: var(--red-dot); }
+
+  .lesson-name {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  .badge-ok { background: var(--green-bg); color: var(--green-text); }
+  .badge-issue { background: var(--red-bg); color: var(--red-text); }
+
+  /* Notes */
+  .notes-area {
+    border-top: 1px solid var(--border);
+    padding: 10px 14px 12px;
+    background: #FAFAF8;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .note-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.65;
+  }
+
+  .note-icon {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .icon-error { background: var(--red-bg); color: var(--red-text); }
+  .icon-suggest { background: var(--blue-bg); color: var(--blue-text); }
+
+  .timecode {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  .drive-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--blue-text);
+    text-decoration: none;
+    margin-top: 5px;
+    padding: 3px 10px;
+    border: 1px solid #B5D4F4;
+    border-radius: var(--radius-sm);
+    background: var(--blue-bg);
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+
+  .drive-link:hover { opacity: 0.75; }
+
+  @media (max-width: 480px) {
+    .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .stat-num { font-size: 24px; }
+    body { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>تقرير مراجعة الدورة <span>— OOP</span></h1>
+        <p class="header-sub">ملاحظات جاهزة للمونتاج قبل النشر على المنصة</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="stat-card stat-ok">
+      <span class="stat-num">17</span>
+      <span class="stat-label">درس تمام</span>
+    </div>
+    <div class="stat-card stat-issue">
+      <span class="stat-num">7</span>
+      <span class="stat-label">يحتاج تعديل</span>
+    </div>
+    <div class="stat-card stat-note">
+      <span class="stat-num">8</span>
+      <span class="stat-label">ملاحظة تفصيلية</span>
+    </div>
+  </div>
+
+  <!-- Section Basics -->
+  <div class="section-block">
+    <div class="section-title">Section Basics — قسم الأساسيات</div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Intro</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Intro to Object</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Starter Project</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Create First Class</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Setting Values in Object</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Class Constructor</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Add Methods to Class</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-suggest">i</div>
+          <div>
+            مقترح عند <span class="timecode">3:38</span> — لو ينفع يتعمل في المونتاج تأكيد بصري على المصطلحات المذكورة في الآخر، زي جدول أو صورة توضيحية.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/14SPjOn8-5dhdws0m-v9sWtmoZTdLkIxJ/view?usp=drive_link" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Classes with Immutable Members</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Constructor Overloading</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">What is Encapsulation</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Access Modifiers</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Getters and Setters</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Static Variables</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced -->
+  <div class="section-block">
+    <div class="section-title">Advanced — قسم التوارث والواجهات</div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Intro to Inheritance</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>
+            عند <span class="timecode">2:22</span> — النص المفروض يكون اتكتب اتأخر وظهر لجزء من الثانية بس.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/1rLpr2gzSCfcm2ZhFoRB7cFsTYxKyytRH/view?usp=drive_link" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Implement on Inheritance</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Super Constructor</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Overriding Methods</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>
+            عند <span class="timecode">3:22</span> — الـ outro zoom أكتر من الطبيعي.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/1PaK-ACFrnMTFwpSZF8y_W8kNCaMdynGe/view?usp=drive_link" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Aggregation vs Composition</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>
+            الصوت فيه مشكلة — خصوصاً أول دقيقتين. لو ينفع يتعاد تسجيلهم يكون أفضل.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/1HN0fBysvTz2x8ot3vZ6B-yFpH2L0YOuQ/view?usp=drive_link" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">What is Interfaces</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>
+            الـ outro مش موجود خالص.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/10V5YLPbZnb4vNhXGMO0HT-ciu3o7yQH9/view?usp=drive_link" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">What is Polymorphism</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Object Base Class</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>أول ثانية مفيش transition بين اسم الدرس والبداية، زي كل الدروس اللي فاتت.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">toString Method</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Generic with Classes</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLID -->
+  <div class="section-block">
+    <div class="section-title">SOLID Principles</div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Introduction</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Single Responsibility</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>الصوت أوطى من كل الدروس اللي فاتت.</div>
+        </div>
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>خطأ إملائي في الاسم في البداية — كلمة <strong>Responsibility</strong> ناقصة حرف <strong>i</strong> قبل الـ b.</div>
+        </div>
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>
+            الـ outro zoom أكتر من الطبيعي.
+            <br><a class="drive-link" href="https://drive.google.com/file/d/1LZgVh4YlKDrju1QXEAGYI3WQ2wvVIkUP/view?usp=sharing" target="_blank">↗ فتح الفيديو</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-issue"></div>
+        <span class="lesson-name">Open / Closed Principle</span>
+        <span class="badge badge-issue">✗ يحتاج تعديل</span>
+      </div>
+      <div class="notes-area">
+        <div class="note-item">
+          <div class="note-icon icon-error">!</div>
+          <div>الـ outro zoom أكتر من الطبيعي.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Liskov Substitution</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Interface Segregation</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+
+    <div class="lesson-row">
+      <div class="lesson-main">
+        <div class="status-dot dot-ok"></div>
+        <span class="lesson-name">Dependency Inversion</span>
+        <span class="badge badge-ok">✓ تمام</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
